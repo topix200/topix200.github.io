@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Medicine Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0056d2;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      color: #0056d2;
+      text-align: center;
+    }
+    .input-group {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .input-group input {
+      padding: 10px;
+      width: 50%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .product-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      width: 300px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .product-card h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .product-card p {
+      margin: 5px 0;
+    }
+    .product-card .price {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .product-card .ad-label {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff9800;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    button {
+      background: #0056d2;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0041a8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dynamic Medicine Store</h1>
+    <p>Find the right medication for your condition</p>
+  </header>
+  <main>
+    <h2>Search for Medications</h2>
+    <div class="input-group">
+      <input type="text" id="condition-input" placeholder="Enter your condition" oninput="filterProducts()">
+    </div>
+    <div class="product-list" id="product-list">
+      <!-- Product cards will be injected here -->
+    </div>
+  </main>
+
+  <script>
+const products = [
+  { 
+    name: 'Advil', 
+    condition: 'Pain Relief', 
+    price: 10.99, 
+    ad: true 
+  },
+  { 
+    name: 'Tylenol', 
+    condition: 'Fever and Pain', 
+    price: 8.99, 
+    ad: false 
+  },
+  { 
+    name: 'Claritin', 
+    condition: 'Allergies', 
+    price: 12.99, 
+    ad: true 
+  },
+  { 
+    name: 'Pepto-Bismol', 
+    condition: 'Stomach Relief', 
+    price: 6.99, 
+    ad: false 
+  },
+  { 
+    name: 'Aspirin', 
+    condition: 'Heart Health', 
+    price: 9.99, 
+    ad: false 
+  },
+  { 
+    name: 'Allegra', 
+    condition: 'Seasonal Allergies', 
+    price: 14.99, 
+    ad: true 
+  },
+  { 
+    name: 'Vicks Vaporub', 
+    condition: 'Cold and Congestion', 
+    price: 7.99, 
+    ad: false 
+  },
+  { 
+    name: 'Zyrtec', 
+    condition: 'Allergies', 
+    price: 11.99, 
+    ad: false 
+  },
+  { 
+    name: 'Mucinex', 
+    condition: 'Cold and Congestion', 
+    price: 13.99, 
+    ad: true 
+  },
+  { 
+    name: 'Benadryl', 
+    condition: 'Allergies', 
+    price: 5.99, 
+    ad: false 
+  },
+  { 
+    name: 'Imodium', 
+    condition: 'Diarrhea Relief', 
+    price: 6.49, 
+    ad: false 
+  },
+  { 
+    name: 'Crestor', 
+    condition: 'Cholesterol Management', 
+    price: 19.99, 
+    ad: true 
+  },
+  { 
+    name: 'Lipitor', 
+    condition: 'Cholesterol Management', 
+    price: 17.99, 
+    ad: false 
+  },
+  { 
+    name: 'Voltaren Gel', 
+    condition: 'Joint Pain', 
+    price: 14.49, 
+    ad: false 
+  },
+  { 
+    name: 'Excedrin', 
+    condition: 'Migraine Relief', 
+    price: 12.49, 
+    ad: true 
+  },
+  { 
+    name: 'Hydrocortisone Cream', 
+    condition: 'Skin Irritation', 
+    price: 5.99, 
+    ad: false 
+  },
+  { 
+    name: 'Neosporin', 
+    condition: 'Wound Care', 
+    price: 8.99, 
+    ad: true 
+  },
+  { 
+    name: 'Robitussin', 
+    condition: 'Cough Relief', 
+    price: 7.99, 
+    ad: false 
+  },
+  { 
+    name: 'NyQuil', 
+    condition: 'Cold and Flu', 
+    price: 9.99, 
+    ad: true 
+  },
+  { 
+    name: 'DayQuil', 
+    condition: 'Cold and Flu', 
+    price: 9.49, 
+    ad: false 
+  }
+];
+
+
+    function filterProducts() {
+      const query = document.getElementById('condition-input').value.toLowerCase();
+      const productList = document.getElementById('product-list');
+      const filteredProducts = products
+        .filter(product => product.condition.toLowerCase().includes(query))
+        .sort((a, b) => {
+          if (a.ad && !b.ad) return -1;
+          if (!a.ad && b.ad) return 1;
+          return a.price - b.price;
+        });
+
+      productList.innerHTML = '';
+      filteredProducts.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.innerHTML = `
+          ${product.ad ? '<p class="ad-label">Ad</p>' : ''}
+          <h3>${product.name}</h3>
+          <p>Condition: ${product.condition}</p>
+          <p class="price">$${product.price.toFixed(2)}</p>
+          <button>Add to Cart</button>
+        `;
+        productList.appendChild(productCard);
+      });
+
+      if (filteredProducts.length === 0) {
+        productList.innerHTML = '<p>No products found for this condition.</p>';
+      }
+    }
+
+    // Initial render for all products
+    filterProducts();
+  </script>
+</body>
+</html>
