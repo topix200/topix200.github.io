@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0056d2;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      color: #0056d2;
+      text-align: center;
+    }
+    .input-group {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .input-group input {
+      padding: 10px;
+      width: 50%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .doctor-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .doctor-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      width: 300px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .doctor-card h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .doctor-card p {
+      margin: 5px 0;
+    }
+    .doctor-card .price {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .doctor-card .ad-label {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff9800;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    button {
+      background: #0056d2;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0041a8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Find a Doctor</h1>
+    <p>Search and book appointments with top doctors</p>
+  </header>
+  <main>
+    <h2>Search for Doctors by Specialization</h2>
+    <div class="input-group">
+      <input type="text" id="specialization-input" placeholder="Enter specialization (e.g., Cardiologist)" oninput="filterDoctors()">
+    </div>
+    <div class="doctor-list" id="doctor-list">
+      <!-- Doctor cards will be injected here -->
+    </div>
+  </main>
+
+  <script>
+    const doctors = [
+  {
+    name: 'Dr. Alice Johnson',
+    specialization: 'Cardiologist',
+    distance: 2.5,
+    price: 150,
+    ad: true,
+    workingHours: 'Mon-Fri: 9am - 5pm'
+  },
+  {
+    name: 'Dr. Bob Smith',
+    specialization: 'Dermatologist',
+    distance: 1.2,
+    price: 100,
+    ad: false,
+    workingHours: 'Mon-Fri: 10am - 4pm'
+  },
+  {
+    name: 'Dr. Charlie Brown',
+    specialization: 'Orthopedic Surgeon',
+    distance: 3.0,
+    price: 200,
+    ad: true,
+    workingHours: 'Tue-Thu: 11am - 6pm'
+  },
+  {
+    name: 'Dr. Dana White',
+    specialization: 'Pediatrician',
+    distance: 0.8,
+    price: 120,
+    ad: false,
+    workingHours: 'Mon-Sat: 8am - 3pm'
+  },
+  {
+    name: 'Dr. Evan Green',
+    specialization: 'General Practitioner',
+    distance: 1.5,
+    price: 90,
+    ad: false,
+    workingHours: 'Mon-Fri: 8am - 5pm'
+  },
+  {
+    name: 'Dr. Fiona Blue',
+    specialization: 'Neurologist',
+    distance: 4.0,
+    price: 180,
+    ad: true,
+    workingHours: 'Wed-Fri: 10am - 6pm'
+  },
+  {
+    name: 'Dr. George Silver',
+    specialization: 'Psychiatrist',
+    distance: 2.2,
+    price: 130,
+    ad: false,
+    workingHours: 'Mon-Wed: 10am - 5pm'
+  },
+  {
+    name: 'Dr. Hannah Gold',
+    specialization: 'Endocrinologist',
+    distance: 3.5,
+    price: 170,
+    ad: true,
+    workingHours: 'Tue-Thu: 9am - 4pm'
+  },
+  {
+    name: 'Dr. Ian Purple',
+    specialization: 'Oncologist',
+    distance: 5.0,
+    price: 250,
+    ad: true,
+    workingHours: 'Mon-Fri: 9am - 3pm'
+  },
+  {
+    name: 'Dr. Jane Doe',
+    specialization: 'Gynecologist',
+    distance: 1.0,
+    price: 110,
+    ad: false,
+    workingHours: 'Mon-Sat: 8am - 2pm'
+  },
+  {
+    name: 'Dr. Kyle White',
+    specialization: 'Ophthalmologist',
+    distance: 2.8,
+    price: 100,
+    ad: false,
+    workingHours: 'Tue-Fri: 9am - 5pm'
+  },
+  {
+    name: 'Dr. Laura Red',
+    specialization: 'Gastroenterologist',
+    distance: 3.2,
+    price: 160,
+    ad: false,
+    workingHours: 'Mon-Wed: 8am - 2pm'
+  },
+  {
+    name: 'Dr. Michael Brown',
+    specialization: 'Rheumatologist',
+    distance: 4.5,
+    price: 190,
+    ad: true,
+    workingHours: 'Tue-Thu: 10am - 6pm'
+  },
+  {
+    name: 'Dr. Nancy Black',
+    specialization: 'Pulmonologist',
+    distance: 1.8,
+    price: 140,
+    ad: false,
+    workingHours: 'Mon-Fri: 9am - 3pm'
+  },
+  {
+    name: 'Dr. Oscar Green',
+    specialization: 'Urologist',
+    distance: 3.9,
+    price: 150,
+    ad: true,
+    workingHours: 'Wed-Fri: 8am - 4pm'
+  },
+  {
+    name: 'Dr. Patricia Yellow',
+    specialization: 'Hematologist',
+    distance: 4.8,
+    price: 220,
+    ad: false,
+    workingHours: 'Mon-Tue: 9am - 4pm'
+  },
+  {
+    name: 'Dr. Quentin Orange',
+    specialization: 'Nephrologist',
+    distance: 5.2,
+    price: 240,
+    ad: true,
+    workingHours: 'Thu-Fri: 10am - 6pm'
+  },
+  {
+    name: 'Dr. Rachel Pink',
+    specialization: 'ENT Specialist',
+    distance: 2.1,
+    price: 130,
+    ad: false,
+    workingHours: 'Mon-Fri: 8am - 1pm'
+  },
+  {
+    name: 'Dr. Steven Violet',
+    specialization: 'Immunologist',
+    distance: 3.6,
+    price: 180,
+    ad: false,
+    workingHours: 'Wed-Sat: 10am - 4pm'
+  },
+  {
+    name: 'Dr. Tina Cyan',
+    specialization: 'Infectious Disease Specialist',
+    distance: 2.7,
+    price: 200,
+    ad: true,
+    workingHours: 'Mon-Thu: 9am - 3pm'
+  }
+];
+
+
+    function filterDoctors() {
+      const query = document.getElementById('specialization-input').value.toLowerCase();
+      const doctorList = document.getElementById('doctor-list');
+      const filteredDoctors = doctors
+        .filter(doctor => doctor.specialization.toLowerCase().includes(query))
+        .sort((a, b) => {
+          if (a.ad && !b.ad) return -1;
+          if (!a.ad && b.ad) return 1;
+          return a.price - b.price;
+        });
+
+      doctorList.innerHTML = '';
+      filteredDoctors.forEach(doctor => {
+        const doctorCard = document.createElement('div');
+        doctorCard.className = 'doctor-card';
+        doctorCard.innerHTML = `
+          ${doctor.ad ? '<p class="ad-label">Recommended(Ad)</p>' : ''}
+          <h3>${doctor.name}</h3>
+          <p>Specialization: ${doctor.specialization}</p>
+          <p>Distance: ${doctor.distance} km</p>
+          <p class="price">Consultation: $${doctor.price.toFixed(2)}</p>
+          <p>Working Hours: ${doctor.workingHours}</p>
+          <button>Book Appointment</button>
+        `;
+        doctorList.appendChild(doctorCard);
+      });
+
+      if (filteredDoctors.length === 0) {
+        doctorList.innerHTML = '<p>No doctors found for this specialization.</p>';
+      }
+    }
+
+    // Initial render for all doctors
+    filterDoctors();
+  </script>
+</body>
+</html>
+
